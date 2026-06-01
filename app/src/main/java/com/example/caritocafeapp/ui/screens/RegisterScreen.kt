@@ -2,10 +2,10 @@ package com.example.caritocafeapp.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -28,13 +29,23 @@ fun RegisterScreen(
     onBackToLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var pin by remember { mutableStateOf("") }
-    var confirmPin by remember { mutableStateOf("") }
+    var fullName by remember { mutableStateOf("") }
+    var identification by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }
+
+    // Validation checks
+    val isIdValid = identification.length >= 8
+    val isPasswordValid = password.length >= 6
+    val isFormValid = fullName.isNotBlank() && isIdValid && isPasswordValid
+
+    // Style colors
+    val accentColor = Color(0xFFD81B60)
+    val darkBlueColor = Color(0xFF1E293B)
+    val lightBgColor = Color(0xFFF8FAFC)
+    val grayHelperColor = Color(0xFF94A3B8)
+    val greenSuccessColor = Color(0xFF2E7D32)
 
     if (showSuccessDialog) {
         AlertDialog(
@@ -43,10 +54,15 @@ fun RegisterScreen(
                 Text(
                     text = "¡Registro Exitoso!",
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3E2723)
+                    color = darkBlueColor
                 ) 
             },
-            text = { Text("Tu cuenta ha sido creada correctamente.") },
+            text = { 
+                Text(
+                    text = "Los datos de $fullName han sido validados correctamente.",
+                    color = darkBlueColor
+                ) 
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -54,7 +70,7 @@ fun RegisterScreen(
                         onRegisterSuccess()
                     }
                 ) {
-                    Text("Aceptar", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                    Text("Aceptar", fontWeight = FontWeight.Bold, color = accentColor)
                 }
             },
             containerColor = Color.White
@@ -64,171 +80,176 @@ fun RegisterScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF6F0)),
+            .background(lightBgColor),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Card(
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(28.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth(0.9f)
+                .padding(vertical = 24.dp)
         ) {
-            Text(
-                text = "Carito Café & Bakery",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Black,
-                color = Color(0xFF3E2723),
-                fontSize = 32.sp
-            )
-            Text(
-                text = "Registro de Nuevo Usuario",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF8D6E63),
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                shape = MaterialTheme.shapes.medium,
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp, vertical = 32.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                // Circular avatar representation
+                Box(
+                    modifier = Modifier
+                        .size(86.dp)
+                        .background(accentColor, CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(52.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Brandon Ramírez",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Black,
+                    color = darkBlueColor,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "Registro de Usuario",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = darkBlueColor,
+                    modifier = Modifier.padding(top = 4.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "Completa los datos para habilitar el registro",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = grayHelperColor,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 24.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                // 1. Full name field
+                OutlinedTextField(
+                    value = fullName,
+                    onValueChange = { fullName = it },
+                    placeholder = { Text("Nombre completo") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = accentColor,
+                        unfocusedBorderColor = Color(0xFFE2E8F0),
+                        placeholderColor = grayHelperColor
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 2. Identification field
+                Column(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
-                        value = username,
-                        onValueChange = {
-                            username = it
-                            errorMessage = ""
-                        },
-                        label = { Text("Usuario") },
-                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        value = identification,
+                        onValueChange = { identification = it },
+                        placeholder = { Text("Identificación") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color(0xFFE2E8F0),
+                            placeholderColor = grayHelperColor
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = {
-                            email = it
-                            errorMessage = ""
-                        },
-                        label = { Text("Correo Electrónico") },
-                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF8D6E63)) },
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                    Text(
+                        text = if (isIdValid) "Identificación válida" else "Debe contener al menos 8 dígitos",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isIdValid) greenSuccessColor else grayHelperColor,
+                        modifier = Modifier.padding(start = 12.dp, top = 4.dp)
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
+                // 3. Password field
+                Column(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
-                        value = pin,
-                        onValueChange = {
-                            pin = it
-                            errorMessage = ""
-                        },
-                        label = { Text("PIN / Contraseña") },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        value = password,
+                        onValueChange = { password = it },
+                        placeholder = { Text("Contraseña") },
                         trailingIcon = {
                             val image = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                                Icon(imageVector = image, contentDescription = null, tint = Color(0xFF8D6E63))
+                                Icon(imageVector = image, contentDescription = null, tint = accentColor)
                             }
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
+                            focusedBorderColor = accentColor,
+                            unfocusedBorderColor = Color(0xFFE2E8F0),
+                            placeholderColor = grayHelperColor
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OutlinedTextField(
-                        value = confirmPin,
-                        onValueChange = {
-                            confirmPin = it
-                            errorMessage = ""
-                        },
-                        label = { Text("Confirmar PIN") },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF8D6E63)) },
-                        visualTransformation = PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                    Text(
+                        text = if (isPasswordValid) "Contraseña válida" else "La contraseña debe tener al menos 6 caracteres",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isPasswordValid) greenSuccessColor else grayHelperColor,
+                        modifier = Modifier.padding(start = 12.dp, top = 4.dp)
                     )
+                }
 
-                    if (errorMessage.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = errorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.align(Alignment.Start)
-                        )
-                    }
+                Spacer(modifier = Modifier.height(32.dp))
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                // Submit button
+                Button(
+                    onClick = {
+                        if (isFormValid) {
+                            showSuccessDialog = true
+                        }
+                    },
+                    enabled = isFormValid,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = accentColor,
+                        contentColor = Color.White,
+                        disabledContainerColor = Color(0xFFE2E8F0),
+                        disabledContentColor = Color(0xFF94A3B8)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = "Finalizar Registro",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-                    Button(
-                        onClick = {
-                            if (username.isBlank() || email.isBlank() || pin.isBlank() || confirmPin.isBlank()) {
-                                errorMessage = "Los campos no deben estar vacíos"
-                            } else if (pin != confirmPin) {
-                                errorMessage = "Los PINs no coinciden"
-                            } else {
-                                showSuccessDialog = true
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF5D4037),
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Text(
-                            text = "Registrarse",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    TextButton(onClick = onBackToLoginClick) {
-                        Text(
-                            text = "¿Ya tienes cuenta? Inicia Sesión",
-                            color = Color(0xFF5D4037),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                TextButton(onClick = onBackToLoginClick) {
+                    Text(
+                        text = "¿Ya tienes cuenta? Inicia Sesión",
+                        color = accentColor,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
