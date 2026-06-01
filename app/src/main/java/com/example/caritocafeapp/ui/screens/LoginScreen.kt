@@ -32,10 +32,16 @@ fun LoginScreen(
     var isPasswordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    val lightGrayBg = Color(0xFFF1F5F9)
+    val darkBlack = Color(0xFF0F172A)
+    val textGray = Color(0xFF64748B)
+    val skyBlueAccent = Color(0xFF0284C7)
+    val borderLightGray = Color(0xFFCBD5E1)
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFFAF6F0)),
+            .background(lightGrayBg),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -49,13 +55,13 @@ fun LoginScreen(
                 text = "Carito Café & Bakery",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Black,
-                color = Color(0xFF3E2723),
+                color = darkBlack,
                 fontSize = 32.sp
             )
             Text(
                 text = "Técnicas de Producción Industrial de Software",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF8D6E63),
+                color = textGray,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
@@ -73,7 +79,7 @@ fun LoginScreen(
                         text = "Acceso Administrativo",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4E342E),
+                        color = darkBlack,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
@@ -84,12 +90,12 @@ fun LoginScreen(
                             errorMessage = ""
                         },
                         label = { Text("Usuario / Email") },
-                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = skyBlueAccent) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
+                            focusedBorderColor = skyBlueAccent,
+                            unfocusedBorderColor = borderLightGray,
+                            focusedLabelColor = skyBlueAccent
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -103,20 +109,20 @@ fun LoginScreen(
                             errorMessage = ""
                         },
                         label = { Text("PIN / Contraseña") },
-                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = skyBlueAccent) },
                         trailingIcon = {
                             val image = if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                                Icon(imageVector = image, contentDescription = null, tint = Color(0xFF8D6E63))
+                                Icon(imageVector = image, contentDescription = null, tint = skyBlueAccent)
                             }
                         },
                         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF8D6E63),
-                            unfocusedBorderColor = Color(0xFFD7CCC8),
-                            focusedLabelColor = Color(0xFF5D4037)
+                            focusedBorderColor = skyBlueAccent,
+                            unfocusedBorderColor = borderLightGray,
+                            focusedLabelColor = skyBlueAccent
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -142,7 +148,7 @@ fun LoginScreen(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF5D4037),
+                            containerColor = skyBlueAccent,
                             contentColor = Color.White
                         ),
                         modifier = Modifier
@@ -162,7 +168,7 @@ fun LoginScreen(
                     TextButton(onClick = onRegisterClick) {
                         Text(
                             text = "¿No tienes cuenta? Regístrate",
-                            color = Color(0xFF5D4037),
+                            color = skyBlueAccent,
                             fontWeight = FontWeight.Bold
                         )
                     }

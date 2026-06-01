@@ -41,9 +41,9 @@ fun RegisterScreen(
     val isFormValid = fullName.isNotBlank() && isIdValid && isPasswordValid
 
     // Style colors
-    val accentColor = Color(0xFFD81B60)
-    val darkBlueColor = Color(0xFF1E293B)
-    val lightBgColor = Color(0xFFF8FAFC)
+    val accentColor = Color(0xFF0284C7)
+    val darkBlueColor = Color(0xFF0F172A)
+    val lightBgColor = Color(0xFFF1F5F9)
     val grayHelperColor = Color(0xFF94A3B8)
     val greenSuccessColor = Color(0xFF2E7D32)
 
