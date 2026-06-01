@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
@@ -22,15 +23,43 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    onLoginSuccess: () -> Unit,
-    onRegisterClick: () -> Unit,
+fun RegisterScreen(
+    onRegisterSuccess: () -> Unit,
+    onBackToLoginClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var pin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { showSuccessDialog = false },
+            title = { 
+                Text(
+                    text = "¡Registro Exitoso!",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF3E2723)
+                ) 
+            },
+            text = { Text("Tu cuenta ha sido creada correctamente.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSuccessDialog = false
+                        onRegisterSuccess()
+                    }
+                ) {
+                    Text("Aceptar", fontWeight = FontWeight.Bold, color = Color(0xFF5D4037))
+                }
+            },
+            containerColor = Color.White
+        )
+    }
 
     Box(
         modifier = modifier
@@ -53,10 +82,10 @@ fun LoginScreen(
                 fontSize = 32.sp
             )
             Text(
-                text = "Técnicas de Producción Industrial de Software",
+                text = "Registro de Nuevo Usuario",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF8D6E63),
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 24.dp)
             )
 
             Card(
@@ -69,22 +98,33 @@ fun LoginScreen(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Acceso Administrativo",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4E342E),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
                     OutlinedTextField(
                         value = username,
                         onValueChange = {
                             username = it
                             errorMessage = ""
                         },
-                        label = { Text("Usuario / Email") },
+                        label = { Text("Usuario") },
                         leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF8D6E63),
+                            unfocusedBorderColor = Color(0xFFD7CCC8),
+                            focusedLabelColor = Color(0xFF5D4037)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = {
+                            email = it
+                            errorMessage = ""
+                        },
+                        label = { Text("Correo Electrónico") },
+                        leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = Color(0xFF8D6E63)) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF8D6E63),
@@ -121,6 +161,27 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = confirmPin,
+                        onValueChange = {
+                            confirmPin = it
+                            errorMessage = ""
+                        },
+                        label = { Text("Confirmar PIN") },
+                        leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = Color(0xFF8D6E63)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF8D6E63),
+                            unfocusedBorderColor = Color(0xFFD7CCC8),
+                            focusedLabelColor = Color(0xFF5D4037)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                     if (errorMessage.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
@@ -135,10 +196,12 @@ fun LoginScreen(
 
                     Button(
                         onClick = {
-                            if (username.isBlank() || pin.isBlank()) {
+                            if (username.isBlank() || email.isBlank() || pin.isBlank() || confirmPin.isBlank()) {
                                 errorMessage = "Los campos no deben estar vacíos"
+                            } else if (pin != confirmPin) {
+                                errorMessage = "Los PINs no coinciden"
                             } else {
-                                onLoginSuccess()
+                                showSuccessDialog = true
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -151,17 +214,17 @@ fun LoginScreen(
                         shape = MaterialTheme.shapes.medium
                     ) {
                         Text(
-                            text = "Ingresar",
+                            text = "Registrarse",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    TextButton(onClick = onRegisterClick) {
+                    TextButton(onClick = onBackToLoginClick) {
                         Text(
-                            text = "¿No tienes cuenta? Regístrate",
+                            text = "¿Ya tienes cuenta? Inicia Sesión",
                             color = Color(0xFF5D4037),
                             fontWeight = FontWeight.Bold
                         )

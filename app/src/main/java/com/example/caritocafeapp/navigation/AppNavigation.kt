@@ -28,6 +28,25 @@ fun AppNavigation(
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
+                },
+                onRegisterClick = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
+        }
+
+        // 1b. Register Screen
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackToLoginClick = {
+                    navController.navigateUp()
                 }
             )
         }
